@@ -6,6 +6,8 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 
 class Main : Application(){
+    val dataManager: DataManager = DataManager()
+
     override fun start(primaryStage: Stage) {
         val mainControler = MainControler(primaryStage, this)
         loadComponent("LandingScreen.fxml", mainControler).apply {
