@@ -41,8 +41,8 @@
                <children>
                   <HBox alignment="CENTER" spacing="50.0">
                      <children>
-                        <Label text="MOSS Key" />
-                        <TextField text="123456" />
+                        <Label text="MOSS Key" fx:id="mossKey"/>
+                        <TextField text="632113431" />
                         <Label text="Language" />
                         <ComboBox prefWidth="150.0" promptText="Java" />
                      </children>
@@ -56,12 +56,12 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" text="Upload" HBox.hgrow="ALWAYS" />
+                        <Button alignment="CENTER" mnemonicParsing="false" text="Upload" HBox.hgrow="ALWAYS" fx:id="uploadButton" onAction="#runMoss" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
                      <children>
-                        <ProgressBar progress="0.0" HBox.hgrow="ALWAYS" />
+                        <ProgressBar progress="0.0" HBox.hgrow="ALWAYS" fx:id="uploadProgressBar"/>
                      </children>
                   </HBox>
                </children>

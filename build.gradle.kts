@@ -20,6 +20,7 @@ dependencies{
         modules("javafx.controls", "javafx.fxml", "javafx.media")
     }
     implementation("io.github.bitstorm:tinyzip-core:1.0.0")
+    implementation("it.zielke:moji:1.0.1")
 }
 
 tasks.withType<KotlinCompile> {

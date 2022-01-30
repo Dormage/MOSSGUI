@@ -1,8 +1,13 @@
+import it.zielke.moji.SocketClient
+import javafx.application.Platform
 import javafx.fxml.FXML
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
+import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.stage.Stage
+import java.net.URI
+import java.net.URL
+import kotlin.concurrent.thread
+import kotlin.io.path.Path
 
 /*
  * @created 28. 01. 2022
@@ -24,7 +29,12 @@ class SettingsControler (private val stage: Stage, private val main: Main){
     private lateinit var sFiles: TableColumn<Student,Int>
     @FXML
     private lateinit var sError: TableColumn<Student,String>
-
+    @FXML
+    private lateinit var uploadButton : Button
+    @FXML
+    private lateinit var mossKey : Label
+    @FXML
+    private lateinit var uploadProgressBar : ProgressBar
 
     @FXML
     fun initialize(){
@@ -36,4 +46,25 @@ class SettingsControler (private val stage: Stage, private val main: Main){
         submissions.items.addAll(dataManager.students)
     }
 
+    fun runMoss(){
+        println("Running MOSS")
+        var socketClient = SocketClient()
+        socketClient.userID = "632113431"
+        socketClient.language = "java"
+        socketClient.run()
+        thread {
+            val currentProgress = 0
+            dataManager.students.forEach {
+                it.files.forEach { it ->
+                    socketClient.uploadFile(it)
+                }
+                Platform.runLater(Runnable {
+                    uploadProgressBar.progress = currentProgress / dataManager.students.size.toDouble()
+                })
+            }
+            socketClient.sendQuery()
+            val resultUri: URL = socketClient.resultURL
+            println("Result $resultUri")
+        }.start()
+    }
 }
