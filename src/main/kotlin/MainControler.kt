@@ -48,7 +48,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                                 error = e.toString()
                             }
                         }
-                        val sourceFiles: Sequence<File> = File(url).walkTopDown().filter { it.toString().endsWith(".java") }
+                        val sourceFiles: Sequence<File> = File(url).walkTopDown().filter { it.isFile && it.toString().endsWith(".java") }
                         dataManager.addStudent(Student(currentProgress,name,url,error,sourceFiles.toMutableList()))
 
                         Platform.runLater(Runnable {
