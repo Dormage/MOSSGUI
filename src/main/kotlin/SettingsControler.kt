@@ -49,9 +49,7 @@ class SettingsControler (private val stage: Stage, private val main: Main){
 
     fun runMoss(){
         Thread {
-            println("Running MOSS")
             var socketClient = SocketClient()
-            println("Running MOSS")
             socketClient.userID = "632113431"
             socketClient.language = "java"
             socketClient.run()
@@ -59,7 +57,6 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             dataManager.students.forEach {
                 it.files.forEach{ file ->
                     socketClient.uploadFile(file)
-                    println("Uploading ${file.absoluteFile}")
                 }
                 Platform.runLater(Runnable {
                     uploadProgressBar.progress = currentProgress / dataManager.students.size.toDouble()
@@ -68,7 +65,8 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             }
             socketClient.sendQuery()
             val resultUri: URL = socketClient.resultURL
-            println("Result $resultUri")
+            dataManager.addHistory(mossQuery(System.currentTimeMillis(), resultUri.toString()))
         }.start()
     }
+
 }

@@ -21,6 +21,7 @@ dependencies{
     }
     implementation("io.github.bitstorm:tinyzip-core:1.0.0")
     implementation("it.zielke:moji:1.0.1")
+    implementation("org.jsoup:jsoup:1.14.3")
 }
 
 tasks.withType<KotlinCompile> {
