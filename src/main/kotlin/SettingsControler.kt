@@ -4,11 +4,10 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.stage.Stage
-import java.io.File
-import java.net.URI
+import org.apache.commons.io.FilenameUtils
 import java.net.URL
-import kotlin.concurrent.thread
-import kotlin.io.path.Path
+import java.text.Normalizer
+
 
 /*
  * @created 28. 01. 2022
@@ -45,8 +44,21 @@ class SettingsControler (private val stage: Stage, private val main: Main){
         sFiles.setCellValueFactory ( PropertyValueFactory<Student,Int>("Files"))
         sError.setCellValueFactory ( PropertyValueFactory<Student,String>("Error"))
         submissions.items.addAll(dataManager.students)
+        submissions.setRowFactory { tv ->
+            object : TableRow<Student?>() {
+                override fun updateItem(item: Student?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (item != null) {
+                        style =
+                            if (item.name.isEmpty()) "-fx-background-color: #FFD2D2;"
+                            else if (item.files.size == 0) "-fx-background-color: #baffba;"
+                            else if (item.error.isNotEmpty()) "-fx-background-color: #FEEFB3;"
+                            else " \"-fx-background-color: #BDE5F8;\""
+                    }
+                }
+            }
+        }
     }
-
     fun runMoss(){
         Thread {
             var socketClient = SocketClient()
@@ -54,9 +66,13 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             socketClient.language = "java"
             socketClient.run()
             var currentProgress = 0
-            dataManager.students.forEach {
+            dataManager.students.filter { it.files.isEmpty() || it.name.isEmpty() }.forEach {
                 it.files.forEach{ file ->
                     socketClient.uploadFile(file)
+                    var result: String = Normalizer.normalize(file.absolutePath, Normalizer.Form.NFD)
+                    result = FilenameUtils.normalizeNoEndSeparator(result, true)
+                        .replace("[^\\p{ASCII}]".toRegex(), "")
+                    println(result)
                 }
                 Platform.runLater(Runnable {
                     uploadProgressBar.progress = currentProgress / dataManager.students.size.toDouble()
@@ -65,6 +81,7 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             }
             socketClient.sendQuery()
             val resultUri: URL = socketClient.resultURL
+            println(resultUri)
             dataManager.addHistory(mossQuery(System.currentTimeMillis(), resultUri.toString()))
         }.start()
     }

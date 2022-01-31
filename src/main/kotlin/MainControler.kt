@@ -49,7 +49,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                             }
                         }
                         val sourceFiles: Sequence<File> = File(url).walkTopDown().filter { it.isFile && it.toString().endsWith(".java") }
-                        dataManager.addStudent(Student(currentProgress,name,url,error,sourceFiles.toMutableList()))
+                        if(name!="" && sourceFiles.count()>0) dataManager.addStudent(Student(currentProgress,name,url,error,sourceFiles.toMutableList()))
 
                         Platform.runLater(Runnable {
                             loadProgress.progress = currentProgress.toDouble() / total
