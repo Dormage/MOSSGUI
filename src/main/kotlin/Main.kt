@@ -10,7 +10,7 @@ class Main : Application(){
 
     override fun start(primaryStage: Stage) {
         val mainControler = MainControler(primaryStage, this)
-        loadComponent("LandingScreen.fxml", mainControler).apply {
+        loadComponent("Main.fxml", mainControler).apply {
             primaryStage.scene = Scene(this)
             primaryStage.show()
         }

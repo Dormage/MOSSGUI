@@ -4,9 +4,9 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.stage.Stage
-import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.FileUtils
+import java.io.File
 import java.net.URL
-import java.text.Normalizer
 
 
 /*
@@ -66,14 +66,10 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             socketClient.language = "java"
             socketClient.run()
             var currentProgress = 0
-            dataManager.students.filter { it.files.isEmpty() || it.name.isEmpty() }.forEach {
-                it.files.forEach{ file ->
-                    socketClient.uploadFile(file)
-                    var result: String = Normalizer.normalize(file.absolutePath, Normalizer.Form.NFD)
-                    result = FilenameUtils.normalizeNoEndSeparator(result, true)
-                        .replace("[^\\p{ASCII}]".toRegex(), "")
-                    println(result)
-                }
+
+            FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true).forEach{
+                socketClient.uploadFile(it)
+                println("Uploaded $it")
                 Platform.runLater(Runnable {
                     uploadProgressBar.progress = currentProgress / dataManager.students.size.toDouble()
                 })
@@ -85,5 +81,4 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             dataManager.addHistory(mossQuery(System.currentTimeMillis(), resultUri.toString()))
         }.start()
     }
-
 }

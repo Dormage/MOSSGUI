@@ -1,5 +1,6 @@
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.net.URL
 import java.util.*
 
 /*
@@ -9,6 +10,7 @@ import java.util.*
 */
 
 class DataManager {
+    lateinit var url:String
     var students = mutableListOf<Student>()
     var history = mutableListOf<mossQuery>()
 
