@@ -74,7 +74,7 @@ class SettingsControler (private val stage: Stage, private val main: Main){
         mainPane.children.setAll(new)
         Thread() {
             val socketClient = SocketClient()
-            socketClient.userID = "632113431"
+            socketClient.userID = "155499961"
             socketClient.language = "java"
             socketClient.run()
             var currentProgress = 0
@@ -87,6 +87,8 @@ class SettingsControler (private val stage: Stage, private val main: Main){
                 })
                 currentProgress++
             }
+            println("Socket status ${socketClient.socket.isConnected}  Stage: ${socketClient.currentStage}")
+
             socketClient.sendQuery();
             val results = socketClient.resultURL
             println(results)
