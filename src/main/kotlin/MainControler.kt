@@ -44,7 +44,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                 //creates temporary directory following required MOSS submission structure
                 val tempDirectory: Path = Files.createTempDirectory("MOSS_")
                 println("Created temporary folder at:  $tempDirectory")
-                dataManager.url = absoluteFile.toString()
+                dataManager.url = tempDirectory.toString()
                 val thread = Thread() {
                     var currentProgress = 0
                     val submissionDirs: Array<File> = absoluteFile.listFiles(DirectoryFileFilter.DIRECTORY as FileFilter)
@@ -70,6 +70,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                             println("Copy command from ${sourceFile.toPath()} to : $destination")
                             logLoadingProgress("Copying source files to $destination")
                         }
+
                         dataManager.addStudent(Student(index, assignmentFolder.name, tempStudentDir.toString(), error, sourceCodeFiles.toMutableList()))
 
                         Platform.runLater(Runnable {
@@ -90,9 +91,12 @@ class MainControler(private val stage: Stage, private val main: Main){
     }
     @FXML
     private fun loadHistory(){
+    }
+    @FXML private fun uploadAssignments(){
 
     }
 }
+
 
 data class Student(
     val id : Int,

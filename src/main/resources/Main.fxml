@@ -56,6 +56,12 @@
             <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Actions">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Submit" onAction="#uploadAssignments" />
+            <MenuItem mnemonicParsing="false" text="Show Results" />
+          </items>
+        </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem mnemonicParsing="false" text="About MyHelloApp" />

@@ -1,12 +1,14 @@
 import it.zielke.moji.SocketClient
 import javafx.application.Platform
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
+import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
+import javafx.scene.layout.AnchorPane
 import javafx.stage.Stage
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.net.URL
 
 
 /*
@@ -17,6 +19,12 @@ import java.net.URL
     
 class SettingsControler (private val stage: Stage, private val main: Main){
     val dataManager: DataManager = main.dataManager
+    @FXML
+    private lateinit var mainPane : AnchorPane
+    @FXML
+    private lateinit var loadingStatusLog : TextField
+    @FXML
+    private lateinit var loadProgress : ProgressBar
     @FXML
     private lateinit var submissions: TableView<Student>
     @FXML
@@ -59,26 +67,35 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             }
         }
     }
-    fun runMoss(){
-        Thread {
-            var socketClient = SocketClient()
+
+    @FXML
+    private fun uploadAssignments (event: ActionEvent){
+        val new : Parent = main.loadComponent("LoadingFiles.fxml", this@SettingsControler)
+        mainPane.children.setAll(new)
+        Thread() {
+            val socketClient = SocketClient()
             socketClient.userID = "632113431"
             socketClient.language = "java"
             socketClient.run()
             var currentProgress = 0
-
-            FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true).forEach{
+            val files = FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true)
+            files.forEach {
+                logLoadingProgress("Uploading $it ...")
                 socketClient.uploadFile(it)
-                println("Uploaded $it")
                 Platform.runLater(Runnable {
-                    uploadProgressBar.progress = currentProgress / dataManager.students.size.toDouble()
+                    loadProgress.progress = currentProgress.toDouble() / files.size
                 })
                 currentProgress++
             }
-            socketClient.sendQuery()
-            val resultUri: URL = socketClient.resultURL
-            println(resultUri)
-            dataManager.addHistory(mossQuery(System.currentTimeMillis(), resultUri.toString()))
+            socketClient.sendQuery();
+            val results = socketClient.resultURL
+            println(results)
         }.start()
+    }
+
+    private fun logLoadingProgress(progress:String){
+        Platform.runLater(Runnable {
+            loadingStatusLog.text = progress
+        })
     }
 }

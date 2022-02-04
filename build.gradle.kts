@@ -27,6 +27,9 @@ dependencies{
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
+tasks.register("getHomeDir") {
+    println("Gradle home dir: ${gradle.gradleHomeDir}")
+}
 
 application {
     mainClass.set("Main")
