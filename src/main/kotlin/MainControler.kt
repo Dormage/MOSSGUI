@@ -62,7 +62,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                             }
                         }
                         //create temp submission folder
-                        val tempStudentDir = Files.createDirectory(Paths.get(tempDirectory.toString() + File.separator + assignmentFolder.name.replaceFirst(" ","_") +File.separator))
+                        val tempStudentDir = Files.createDirectory(Paths.get(tempDirectory.toString() + File.separator + assignmentFolder.name.replace(" ","_") +File.separator))
                         val sourceCodeFiles = FileUtils.listFiles(File(assignmentFolder.toString()), arrayOf("java"), true)
                         sourceCodeFiles.forEach{ sourceFile ->
                             val destination = File(tempStudentDir.toString() + File.separator + sourceFile.name)
@@ -70,9 +70,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                             println("Copy command from ${sourceFile.toPath()} to : $destination")
                             logLoadingProgress("Copying source files to $destination")
                         }
-
                         dataManager.addStudent(Student(index, assignmentFolder.name, tempStudentDir.toString(), error, sourceCodeFiles.toMutableList()))
-
                         Platform.runLater(Runnable {
                            loadProgress.progress = currentProgress.toDouble() / submissionDirs.size
                         })

@@ -73,7 +73,7 @@ class SettingsControler (private val stage: Stage, private val main: Main){
     }
 
     @FXML
-    private fun uploadAssignments (event: ActionEvent){
+    private fun uploadAssignments (){
         val new : Parent = main.loadComponent("LoadingFiles.fxml", this@SettingsControler)
         mainPane.children.setAll(new)
         Thread() {
@@ -81,22 +81,18 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             socketClient.userID = "632113431"
             socketClient.language = "java"
             socketClient.run()
+            var currentProgress = 0
             //upload .java files
-            try {
-                Files.walk(Paths.get("/tmp/MOSS_5231636663982958914")).use { paths ->
-                    paths.forEach { path: Path ->
-                        if (path.toString().endsWith(".java")) {
-                            try {
-                                println("Uploading: $path")
-                                socketClient.uploadFile(path.toFile())
-                            } catch (e: IOException) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
+            val files = FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true)
+            files.forEach {
+                logLoadingProgress("Uploading $it ...")
+                val newData = it.readText().replace("[^\\x00-\\x7F]+".toRegex(), "")
+                it.writeText(newData)
+                socketClient.uploadFile(it)
+                Platform.runLater(Runnable {
+                    loadProgress.progress = currentProgress.toDouble() / files.size
+                })
+                currentProgress++
             }
             println("Socket status ${socketClient.socket.isConnected}  Stage: ${socketClient.currentStage}")
             socketClient.sendQuery();

@@ -21,7 +21,7 @@
                      </font>
                   </Label>
                   <ProgressBar fx:id="loadProgress" maxWidth="1.7976931348623157E308" progress="0.0" />
-                  <TextField  fx:id="loadingStatusLog" style="-fx-background-color: rgba(0,0,0,0);" />
+                  <TextField  fx:id="loadingStatusLog" disable="true" style="-fx-background-color: rgba(0,0,0,0);" />
                </children>
             </VBox>
          </children>
