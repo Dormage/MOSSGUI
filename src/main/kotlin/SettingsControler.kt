@@ -9,6 +9,10 @@ import javafx.scene.layout.AnchorPane
 import javafx.stage.Stage
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 
 /*
@@ -74,21 +78,27 @@ class SettingsControler (private val stage: Stage, private val main: Main){
         mainPane.children.setAll(new)
         Thread() {
             val socketClient = SocketClient()
-            socketClient.userID = "155499961"
+            socketClient.userID = "632113431"
             socketClient.language = "java"
             socketClient.run()
-            var currentProgress = 0
-            val files = FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true)
-            files.forEach {
-                logLoadingProgress("Uploading $it ...")
-                socketClient.uploadFile(it)
-                Platform.runLater(Runnable {
-                    loadProgress.progress = currentProgress.toDouble() / files.size
-                })
-                currentProgress++
+            //upload .java files
+            try {
+                Files.walk(Paths.get("/tmp/MOSS_5231636663982958914")).use { paths ->
+                    paths.forEach { path: Path ->
+                        if (path.toString().endsWith(".java")) {
+                            try {
+                                println("Uploading: $path")
+                                socketClient.uploadFile(path.toFile())
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
             println("Socket status ${socketClient.socket.isConnected}  Stage: ${socketClient.currentStage}")
-
             socketClient.sendQuery();
             val results = socketClient.resultURL
             println(results)

@@ -45,7 +45,7 @@ class MainControler(private val stage: Stage, private val main: Main){
                 val tempDirectory: Path = Files.createTempDirectory("MOSS_")
                 println("Created temporary folder at:  $tempDirectory")
                 dataManager.url = tempDirectory.toString()
-                val thread = Thread() {
+                Thread() {
                     var currentProgress = 0
                     val submissionDirs: Array<File> = absoluteFile.listFiles(DirectoryFileFilter.DIRECTORY as FileFilter)
                     submissionDirs.forEachIndexed { index, assignmentFolder ->

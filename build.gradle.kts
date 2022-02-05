@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.6.10"
     id("org.openjfx.javafxplugin")  version "0.0.10"
     application
 }
@@ -24,9 +24,6 @@ dependencies{
     implementation("org.jsoup:jsoup:1.14.3")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-}
 tasks.register("getHomeDir") {
     println("Gradle home dir: ${gradle.gradleHomeDir}")
 }
