@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Intellij
 .idea/
 *.iml
@@ -23,3 +24,30 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+=======
+# Intellij
+.idea/
+*.iml
+*.iws
+out/
+build
+gradle
+# Mac
+.DS_Store
+
+$builds
+*.jar
+
+.gradle
+**/build/
+!src/**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+>>>>>>> master
