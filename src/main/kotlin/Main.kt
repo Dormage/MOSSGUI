@@ -40,6 +40,7 @@ class Main : Application(){
         val results = socketClient.resultURL
         println(results)
 
+
     }
 
     fun loadComponent(path: String, controller: Any? = null): Parent {
