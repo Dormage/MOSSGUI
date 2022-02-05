@@ -1,17 +1,14 @@
-
 import it.zielke.moji.SocketClient
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
-import javafx.scene.Scene
 import javafx.stage.Stage
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class Main : Application(){
+class Main : Application() {
     val dataManager: DataManager = DataManager()
 
     override fun start(primaryStage: Stage) {
@@ -20,12 +17,16 @@ class Main : Application(){
         socketClient.language = "java"
         socketClient.run()
         try {
-            Files.walk(Paths.get("/tmp/MOSS_5231636663982958914")).use { paths ->
-                paths.forEach { path: Path ->
+            Files.walk(Paths.get("/Users/mihael/Downloads/MOSS_283712831731989469")).use { paths ->
+                paths.sorted().forEach { path: Path ->
                     if (path.toString().endsWith(".java")) {
                         try {
                             println("Uploading: $path")
-                            socketClient.uploadFile(path.toFile())
+                            val newFile = path.toFile()
+                            val newData = newFile.readText().replace("[^\\x00-\\x7F]+".toRegex(), "")
+                            newFile.writeText(newData)
+                            socketClient.uploadFile(newFile)
+                            Thread.sleep(100)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -38,7 +39,7 @@ class Main : Application(){
         println("Socket status ${socketClient.socket.isConnected}  Stage: ${socketClient.currentStage}")
         socketClient.sendQuery();
         val results = socketClient.resultURL
-        println(results)
+        print(results)
 
     }
 
@@ -48,6 +49,7 @@ class Main : Application(){
             return load()
         }
     }
+
     fun main() {
         System.setProperty("kotlinx.coroutines.scheduler", "off")
         Application.launch(Main::class.java)
