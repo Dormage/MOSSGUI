@@ -1,6 +1,5 @@
 import it.zielke.moji.SocketClient
 import javafx.application.Platform
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -9,10 +8,8 @@ import javafx.scene.layout.AnchorPane
 import javafx.stage.Stage
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.util.Timer
+import java.util.TimerTask
 
 
 /*
@@ -21,7 +18,7 @@ import java.nio.file.Paths
  * @author Dormage
 */
     
-class SettingsControler (private val stage: Stage, private val main: Main){
+class SubmitControler (private val stage: Stage, private val main: Main){
     val dataManager: DataManager = main.dataManager
     @FXML
     private lateinit var mainPane : AnchorPane
@@ -30,40 +27,36 @@ class SettingsControler (private val stage: Stage, private val main: Main){
     @FXML
     private lateinit var loadProgress : ProgressBar
     @FXML
-    private lateinit var submissions: TableView<Student>
+    private lateinit var loadingTitle : Label
     @FXML
-    private lateinit var sId: TableColumn<Student,Int>
+    private lateinit var submissions: TableView<Preview>
     @FXML
-    private lateinit var sName: TableColumn<Student,String>
+    private lateinit var sId: TableColumn<Preview,Int>
     @FXML
-    private lateinit var sUrl: TableColumn<Student,String>
+    private lateinit var sName: TableColumn<Preview,String>
     @FXML
-    private lateinit var sFiles: TableColumn<Student,Int>
+    private lateinit var sUrl: TableColumn<Preview,String>
     @FXML
-    private lateinit var sError: TableColumn<Student,String>
+    private lateinit var sFiles: TableColumn<Preview,Int>
     @FXML
-    private lateinit var uploadButton : Button
-    @FXML
-    private lateinit var mossKey : Label
-    @FXML
-    private lateinit var uploadProgressBar : ProgressBar
+    private lateinit var sError: TableColumn<Preview,String>
 
     @FXML
     fun initialize(){
-        sId.setCellValueFactory ( PropertyValueFactory<Student,Int>("Id"))
-        sName.setCellValueFactory ( PropertyValueFactory<Student,String>("Name"))
-        sUrl.setCellValueFactory ( PropertyValueFactory<Student,String>("Url"))
-        sFiles.setCellValueFactory ( PropertyValueFactory<Student,Int>("Files"))
-        sError.setCellValueFactory ( PropertyValueFactory<Student,String>("Error"))
-        submissions.items.addAll(dataManager.students)
+        sId.setCellValueFactory ( PropertyValueFactory<Preview,Int>("Id"))
+        sName.setCellValueFactory ( PropertyValueFactory<Preview,String>("Name"))
+        sUrl.setCellValueFactory ( PropertyValueFactory<Preview,String>("Url"))
+        sFiles.setCellValueFactory ( PropertyValueFactory<Preview,Int>("Files"))
+        sError.setCellValueFactory ( PropertyValueFactory<Preview,String>("Error"))
+        submissions.items.addAll(dataManager.previews)
         submissions.setRowFactory { tv ->
-            object : TableRow<Student?>() {
-                override fun updateItem(item: Student?, empty: Boolean) {
+            object : TableRow<Preview?>() {
+                override fun updateItem(item: Preview?, empty: Boolean) {
                     super.updateItem(item, empty)
                     if (item != null) {
                         style =
                             if (item.name.isEmpty()) "-fx-background-color: #FFD2D2;"
-                            else if (item.files.size == 0) "-fx-background-color: #baffba;"
+                            else if (item.files.size == 0) "-fx-background-color: #e8892a;"
                             else if (item.error.isNotEmpty()) "-fx-background-color: #FEEFB3;"
                             else " \"-fx-background-color: #BDE5F8;\""
                     }
@@ -74,8 +67,9 @@ class SettingsControler (private val stage: Stage, private val main: Main){
 
     @FXML
     private fun uploadAssignments (){
-        val new : Parent = main.loadComponent("LoadingFiles.fxml", this@SettingsControler)
+        val new : Parent = main.loadComponent("LoadingFiles.fxml", this@SubmitControler)
         mainPane.children.setAll(new)
+        Platform.runLater(Runnable { loadingTitle.text = "Uploading files" })
         Thread() {
             val socketClient = SocketClient()
             socketClient.userID = "632113431"
@@ -86,6 +80,7 @@ class SettingsControler (private val stage: Stage, private val main: Main){
             val files = FileUtils.listFiles(File(dataManager.url), arrayOf("java"), true)
             files.forEach {
                 logLoadingProgress("Uploading $it ...")
+                println("Loading file $it")
                 val newData = it.readText().replace("[^\\x00-\\x7F]+".toRegex(), "")
                 it.writeText(newData)
                 socketClient.uploadFile(it)
@@ -95,15 +90,29 @@ class SettingsControler (private val stage: Stage, private val main: Main){
                 currentProgress++
             }
             println("Socket status ${socketClient.socket.isConnected}  Stage: ${socketClient.currentStage}")
+            Platform.runLater(Runnable { logLoadingProgress("Waiting for results...") })
+            Platform.runLater(Runnable { loadingTitle.text = "Waiting for server" })
+            Timer().scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    Platform.runLater(Runnable {
+                        loadProgress.progress = (loadProgress.progress + 0.1) %1
+                    })
+                    if(socketClient.currentStage == it.zielke.moji.Stage.AWAITING_END){
+                        cancel()
+                    }
+                }
+            },0,100)
             socketClient.sendQuery();
             val results = socketClient.resultURL
             println(results)
+            dataManager.parseMossResult(results)
         }.start()
     }
 
-    private fun logLoadingProgress(progress:String){
+    private fun logLoadingProgress(progress: String){
         Platform.runLater(Runnable {
             loadingStatusLog.text = progress
         })
     }
+
 }

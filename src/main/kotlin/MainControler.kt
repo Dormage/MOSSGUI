@@ -2,6 +2,7 @@ import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.Parent
+import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.control.TextField
 import javafx.scene.layout.AnchorPane
@@ -32,10 +33,12 @@ class MainControler(private val stage: Stage, private val main: Main){
     @FXML
     private lateinit var mainPane : AnchorPane
     @FXML
+    private lateinit var loadingTitle : Label
+    @FXML
     private lateinit var loadingStatusLog : TextField
-
     @FXML
     private fun loadAssignments(event: ActionEvent) {
+        println("load callback")
         DirectoryChooser().apply {
             title = "Select folder containing assignments"
             showDialog(stage)?.apply {
@@ -70,13 +73,19 @@ class MainControler(private val stage: Stage, private val main: Main){
                             println("Copy command from ${sourceFile.toPath()} to : $destination")
                             logLoadingProgress("Copying source files to $destination")
                         }
-                        dataManager.addStudent(Student(index, assignmentFolder.name, tempStudentDir.toString(), error, sourceCodeFiles.toMutableList()))
+                        dataManager.addPreview(Preview(
+                            index,
+                            assignmentFolder.name,
+                            tempStudentDir.toString(),
+                            error,
+                            sourceCodeFiles.toMutableList()
+                        ))
                         Platform.runLater(Runnable {
                            loadProgress.progress = currentProgress.toDouble() / submissionDirs.size
                         })
                         currentProgress++
                     }
-                    val preview :Parent = main.loadComponent("PreviewAssignments.fxml", SettingsControler(stage,main))
+                    val preview :Parent = main.loadComponent("PreviewAssignments.fxml", SubmitControler(stage,main))
                     stage.scene.root = preview
                 }.start()
             }
@@ -91,15 +100,8 @@ class MainControler(private val stage: Stage, private val main: Main){
     private fun loadHistory(){
     }
     @FXML private fun uploadAssignments(){
-
     }
 }
 
 
-data class Student(
-    val id : Int,
-    val name: String,
-    val url: String,
-    val error: String,
-    val files: MutableList<File>
-    )
+

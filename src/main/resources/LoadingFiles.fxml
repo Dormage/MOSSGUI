@@ -15,7 +15,7 @@
          <children>
             <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label text="Scanning files...">
+                  <Label fx:id="loadingTitle" text="Scanning assignments...">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -49,7 +49,7 @@
               <Menu mnemonicParsing="false" text="File">
                   <items>
                       <MenuItem mnemonicParsing="false" text="New" />
-                      <MenuItem fx:id="loadAssignments" mnemonicParsing="false" disable="true" text="Open…" />
+                      <MenuItem fx:id="loadAssignments" disable="true" mnemonicParsing="false" text="Open…" />
                       <SeparatorMenuItem mnemonicParsing="false" />
                       <MenuItem mnemonicParsing="false" text="Close" />
                       <MenuItem mnemonicParsing="false" text="Save" />
@@ -61,7 +61,7 @@
               </Menu>
               <Menu mnemonicParsing="false" text="Actions">
                   <items>
-                      <MenuItem mnemonicParsing="false" text="Submit" onAction="#uploadAssignments" />
+                      <MenuItem mnemonicParsing="false" onAction="#uploadAssignments" text="Submit" />
                       <MenuItem mnemonicParsing="false" text="Show Results" />
                   </items>
               </Menu>
@@ -74,7 +74,7 @@
       </MenuBar>
     <AnchorPane fx:id="mainPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <center>
                   <TableView fx:id="submissions">
                      <columns>

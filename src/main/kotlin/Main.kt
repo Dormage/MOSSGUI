@@ -3,6 +3,7 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Stage
+import java.net.URL
 
 class Main : Application() {
     val dataManager: DataManager = DataManager()
@@ -13,6 +14,7 @@ class Main : Application() {
             primaryStage.scene = Scene(this)
             primaryStage.show()
         }
+        dataManager.parseMossResult(URL("http://moss.stanford.edu/results/2/9840761405389"))
     }
 
     fun loadComponent(path: String, controller: Any? = null): Parent {
