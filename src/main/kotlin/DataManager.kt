@@ -44,15 +44,13 @@ class DataManager {
             val keyA = sha256(submissionA).asHex
             val keyB = sha256(submissionB).asHex
 
-            val studentA  = results[keyA] ?: Student(keyA, submissionA, linkA, mutableMapOf())
-            val studentB  = results[keyB] ?: Student(keyB, submissionB, linkB, mutableMapOf())
+            val studentA = results.computeIfAbsent(keyA) { Student(keyA, submissionA, linkA, mutableMapOf()) }
+            val studentB = results.computeIfAbsent(keyB) { Student(keyB, submissionB, linkB, mutableMapOf()) }
             val result = Result(linkA, linkB, similarityA, similarityB, linesMatched)
-
-            studentA.resultMap[studentB] = result
-            studentB.resultMap[studentA] = result
-            results[studentA.id] = studentA
-            results[studentB.id] = studentB
+            studentA.resultMap[studentB.id] = result
+            studentB.resultMap[studentA.id] = result
         }
+        print("Done")
     }
 }
 
@@ -62,7 +60,7 @@ data class Student(
     val id: String,
     val name: String,
     val url: String,
-    val resultMap: MutableMap<Student, Result>
+    val resultMap: MutableMap<String, Result>
 )
 
 data class Result(
