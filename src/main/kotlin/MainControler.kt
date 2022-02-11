@@ -1,12 +1,16 @@
 import javafx.application.Platform
 import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.Parent
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.control.TextField
-import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.stage.DirectoryChooser
+import javafx.stage.Popup
 import javafx.stage.Stage
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.DirectoryFileFilter
@@ -36,6 +40,8 @@ class MainControler(private val stage: Stage, private val main: Main){
     private lateinit var loadingTitle : Label
     @FXML
     private lateinit var loadingStatusLog : TextField
+    @FXML
+    private lateinit var popupPane: BorderPane
     @FXML
     private fun loadAssignments(event: ActionEvent) {
         println("load callback")
@@ -100,6 +106,23 @@ class MainControler(private val stage: Stage, private val main: Main){
     private fun loadHistory(){
     }
     @FXML private fun uploadAssignments(){
+    }
+    @FXML
+    private fun openSettingsPopup(){
+        val new : Parent = main.loadComponent("SettingsScreen.fxml", this@MainControler)
+        val popup: Popup = Popup()
+        popup.scene.fill= Color.web("FFFFFF")
+        popup.width = 400.0
+        popup.height = 300.0
+        popup.isAutoFix = true;
+        popup.isAutoHide = true;
+        popup.isHideOnEscape = true;
+        popupPane.border = Border(BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
+        popup.content.addAll(new)
+        popup.show(stage)
+        val close: Button = new.lookup("#settingsDone") as Button
+        val event: EventHandler<ActionEvent?> = EventHandler<ActionEvent?> { popup.hide() }
+        close.onAction = event
     }
 }
 

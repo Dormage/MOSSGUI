@@ -1,15 +1,18 @@
 import it.zielke.moji.SocketClient
 import javafx.application.Platform
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
+import javafx.stage.Popup
 import javafx.stage.Stage
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 
 
 /*
@@ -40,7 +43,8 @@ class SubmitControler (private val stage: Stage, private val main: Main){
     private lateinit var sFiles: TableColumn<Preview,Int>
     @FXML
     private lateinit var sError: TableColumn<Preview,String>
-
+    @FXML
+    private lateinit var popupPane: BorderPane
     @FXML
     fun initialize(){
         sId.setCellValueFactory ( PropertyValueFactory<Preview,Int>("Id"))
@@ -63,6 +67,23 @@ class SubmitControler (private val stage: Stage, private val main: Main){
                 }
             }
         }
+    }
+    @FXML
+    private fun openSettingsPopup(){
+        val new : Parent = main.loadComponent("SettingsScreen.fxml", this@SubmitControler)
+        val popup: Popup = Popup()
+        popup.scene.fill= Color.web("FFFFFF")
+        popup.width = 400.0
+        popup.height = 300.0
+        popup.isAutoFix = true;
+        popup.isAutoHide = true;
+        popup.isHideOnEscape = true;
+        popupPane.border = Border(BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
+        popup.content.addAll(new)
+        popup.show(stage)
+        val close: Button = new.lookup("#settingsDone") as Button
+        val event: EventHandler<ActionEvent?> = EventHandler<ActionEvent?> { popup.hide() }
+        close.onAction = event
     }
 
     @FXML

@@ -50,7 +50,6 @@ class DataManager {
             studentA.resultMap[studentB.id] = result
             studentB.resultMap[studentA.id] = result
         }
-        print("Done")
     }
 }
 
